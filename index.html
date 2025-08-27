@@ -225,37 +225,48 @@
     const typeEl = document.getElementById('type');
     const replayBtn = document.getElementById('replay');
 
-    async function typeLine(text, speed=38){
-      // پاک کردن محتوای قبلی
-      typeEl.innerHTML = '';
-      
-      // ایجاد یک span برای هر خط
+    // تابع جدید برای تایپ کلمه به کلمه
+    async function typeWords(text, speed = 100) {
+      const words = text.split(' ');
       const lineSpan = document.createElement('span');
       lineSpan.style.display = 'block';
-      lineSpan.style.minHeight = '1.8em'; // حفظ ارتفاع خط حتی وقتی خالی است
+      lineSpan.style.minHeight = '1.8em';
       typeEl.appendChild(lineSpan);
       
       // اضافه کردن مکان‌نما
       lineSpan.insertAdjacentHTML('beforeend', '<span class="cursor"></span>');
       const cursor = lineSpan.querySelector('.cursor:last-of-type');
       
-      // تایپ کاراکترها
-      for(let i=0;i<text.length;i++){
-        cursor.insertAdjacentText('beforebegin', text[i]);
-        await new Promise(r=>setTimeout(r, speed + Math.random()*40));
+      // تایپ کلمه به کلمه
+      for (let i = 0; i < words.length; i++) {
+        // اضافه کردن فاصله بین کلمات (به جز کلمه اول)
+        if (i > 0) {
+          cursor.insertAdjacentText('beforebegin', ' ');
+        }
+        
+        // اضافه کردن کلمه
+        const word = words[i];
+        for (let j = 0; j < word.length; j++) {
+          cursor.insertAdjacentText('beforebegin', word[j]);
+          // سرعت تایپ برای حروف درون کلمه سریع‌تر است
+          await new Promise(r => setTimeout(r, speed / 2));
+        }
+        
+        // مکث بین کلمات
+        await new Promise(r => setTimeout(r, speed));
       }
       
       // حذف مکان‌نما
       cursor.remove();
       
       // مکث بین خطوط
-      await new Promise(r=>setTimeout(r, 400));
+      await new Promise(r => setTimeout(r, 400));
     }
 
-    async function runTyping(){
-      typeEl.innerHTML='';
-      for (const l of lines){ 
-        await typeLine(l); 
+    async function runTyping() {
+      typeEl.innerHTML = '';
+      for (const l of lines) {
+        await typeWords(l);
       }
     }
     
@@ -269,13 +280,13 @@
 
     // ===== Hearts generator =====
     const heartsLayer = document.getElementById('hearts');
-    function makeHeart(){
+    function makeHeart() {
       const d = document.createElement('div');
       d.className = 'heart';
-      const size = 12 + Math.random()*26; // px
-      const x = Math.random()*100; // vw
-      const rotate = (Math.random()*40 - 20).toFixed(2);
-      const duration = 8 + Math.random()*8; // s
+      const size = 12 + Math.random() * 26;
+      const x = Math.random() * 100;
+      const rotate = (Math.random() * 40 - 20).toFixed(2);
+      const duration = 8 + Math.random() * 8;
       d.style.left = x + 'vw';
       d.style.animation = `rise ${duration}s linear forwards`;
       d.style.transform = `rotate(${rotate}deg)`;
@@ -291,12 +302,10 @@
           </defs>
         </svg>`;
       heartsLayer.appendChild(d);
-      setTimeout(()=>d.remove(), duration*1000 + 500);
+      setTimeout(() => d.remove(), duration * 1000 + 500);
     }
     setInterval(makeHeart, 220);
-    for(let i=0;i<14;i++) setTimeout(makeHeart, i*180);
-
-    
+    for (let i = 0; i < 14; i++) setTimeout(makeHeart, i * 180);
 
     // ===== دکمه ویژه =====
     const specialBtn = document.getElementById('specialBtn');
@@ -304,7 +313,7 @@
     
     specialBtn.addEventListener('click', function() {
       // ایجاد قلب‌های زیاد
-      for(let i = 0; i < 50; i++) {
+      for (let i = 0; i < 50; i++) {
         setTimeout(() => makeHeart(), i * 100);
       }
       
