@@ -72,11 +72,15 @@
       border:1px solid rgba(255,255,255,.18);
       border-radius:22px; padding:22px; position:relative; overflow:hidden;
     }
-    .type {
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+    .type{
+      font-size:clamp(20px, 2.1vw, 28px); 
+      line-height:1.8; 
+      font-weight:600;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      letter-spacing: 0.5px;
+    }
     .cursor{display:inline-block; width:2px; height:1em; background:var(--light); margin-right:3px; animation:blink 1s steps(1) infinite}
     @keyframes blink{50%{opacity:0}}
 
@@ -222,22 +226,45 @@
     const replayBtn = document.getElementById('replay');
 
     async function typeLine(text, speed=38){
-      typeEl.insertAdjacentHTML('beforeend', '<span class="cursor"></span>');
-      const cursor = typeEl.querySelector('.cursor:last-of-type');
+      // پاک کردن محتوای قبلی
+      typeEl.innerHTML = '';
+      
+      // ایجاد یک span برای هر خط
+      const lineSpan = document.createElement('span');
+      lineSpan.style.display = 'block';
+      lineSpan.style.minHeight = '1.8em'; // حفظ ارتفاع خط حتی وقتی خالی است
+      typeEl.appendChild(lineSpan);
+      
+      // اضافه کردن مکان‌نما
+      lineSpan.insertAdjacentHTML('beforeend', '<span class="cursor"></span>');
+      const cursor = lineSpan.querySelector('.cursor:last-of-type');
+      
+      // تایپ کاراکترها
       for(let i=0;i<text.length;i++){
         cursor.insertAdjacentText('beforebegin', text[i]);
         await new Promise(r=>setTimeout(r, speed + Math.random()*40));
       }
+      
+      // حذف مکان‌نما
       cursor.remove();
-      typeEl.insertAdjacentHTML('beforeend','<br/>');
+      
+      // مکث بین خطوط
       await new Promise(r=>setTimeout(r, 400));
     }
 
     async function runTyping(){
       typeEl.innerHTML='';
-      for (const l of lines){ await typeLine(l); }
+      for (const l of lines){ 
+        await typeLine(l); 
+      }
     }
-    runTyping();
+    
+    // اجرای تایپ‌رایتر پس از لود کامل صفحه
+    document.addEventListener('DOMContentLoaded', function() {
+      // کمی تاخیر برای اطمینان از لود کامل فونت
+      setTimeout(runTyping, 300);
+    });
+    
     replayBtn.addEventListener('click', runTyping);
 
     // ===== Hearts generator =====
