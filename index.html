@@ -72,7 +72,11 @@
       border:1px solid rgba(255,255,255,.18);
       border-radius:22px; padding:22px; position:relative; overflow:hidden;
     }
-    .type{font-size:clamp(20px, 2.1vw, 28px); line-height:1.8; font-weight:600}
+    .type {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
     .cursor{display:inline-block; width:2px; height:1em; background:var(--light); margin-right:3px; animation:blink 1s steps(1) infinite}
     @keyframes blink{50%{opacity:0}}
 
